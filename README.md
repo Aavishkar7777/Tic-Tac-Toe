@@ -111,3 +111,10 @@ Play again? (y/n)
 ## 📜 License
 
 This project is open-source and free to use for educational or personal use.
+---
+
+## 👨‍💻 Author
+
+**Aavishkar Chaudhari**  
+Aspiring Software Engineer | Passionate about Java and Problem Solving  
+🔗 [GitHub](https://github.com/Aavishkar7777)
