@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class TicTacToe {
+    // ANSI escape codes for colored output
     public static final String RESET = "\u001B[0m";
     public static final String RED = "\u001B[31m";
     public static final String BLUE = "\u001B[34m";
@@ -12,7 +13,7 @@ public class TicTacToe {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("Welcome to Tic Tac Toe!");
+        System.out.println("\nWelcome to Tic Tac Toe!");
         System.out.println("Player 1 is X and Player 2 is O.");
         System.out.println("Enter a number from 1 to 9 to place your mark on the board.");
         System.out.println("The board positions are as follows:");
@@ -26,6 +27,7 @@ public class TicTacToe {
         System.out.println("2. Play with Bot");
 
         int gameMode = 0;
+        // Input validation for game mode selection
         while (true) {
             try {
                 gameMode = scanner.nextInt();
@@ -44,10 +46,10 @@ public class TicTacToe {
 
         char player = 'X';
         boolean gameOver = false;
-
         char playAgain = 'y';
-
+        // Main game loop
         do {
+            System.out.println("\nStarting a new game...");
             char[][] board = new char[3][3];
 
             for (int row = 0; row < 3; row++) {
@@ -55,6 +57,7 @@ public class TicTacToe {
                     board[row][col] = ' ';
                 }
             }
+
             gameOver = false;
             player = 'X';
 
@@ -62,7 +65,9 @@ public class TicTacToe {
 
                 printBoard(board);
                 int position = -1;
+                // Player input handling
                 if (gameMode == 1 || player == 'X') {
+
                     while (true) {
                         System.out.println("Player " + player + " enter: ");
 
@@ -95,7 +100,7 @@ public class TicTacToe {
                         }
                     }
 
-                } else {
+                } else { // Bot's turn
                     System.out.println("Bot is making a move...");
                     position = getBotMove(board, 'O', 'X');
                     int row = getRowFromPosition(position);
@@ -103,14 +108,17 @@ public class TicTacToe {
                     board[row][col] = 'O';
                 }
 
+                // Check if the current player has won
                 gameOver = haveWon(board, player);
 
+                // If the game is over, announce the winner
                 if (gameOver) {
                     System.out.println("Player " + player + " has won the game.");
                 } else {
                     player = (player == 'X') ? 'O' : 'X';
                 }
 
+                // Check if the board is full and it's a draw
                 if (isBoardFull(board)) {
                     System.out.println("It's a draw!");
                     break;
@@ -122,26 +130,33 @@ public class TicTacToe {
             System.out.println("Play again? (y/n)");
             playAgain = scanner.next().toUpperCase().charAt(0);
 
-        } while (playAgain == 'Y');
+        } while (playAgain == 'Y'); // Loop to play again
 
         scanner.close();
     }
 
+    // Method to convert 1–9 board position into corresponding row index (0–2)
     public static int getRowFromPosition(int position) {
         int row = (position - 1) / 3;
         return row;
     }
 
+    // Method to convert 1–9 board position into corresponding column index (0–2)
     public static int getColumnFromPosition(int position) {
         int col = (position - 1) % 3;
         return col;
     }
 
+    // Method to print the Tic Tac Toe board with colored output
     public static void printBoard(char[][] board) {
+
         for (int row = 0; row < 3; row++) {
+
             for (int col = 0; col < 3; col++) {
+
                 char cell = board[row][col];
-                if (cell == 'X') {
+
+                if (cell == 'X') { 
                     System.out.print(RED + cell + RESET);
                 } else if (cell == 'O') {
                     System.out.print(BLUE + cell + RESET);
@@ -153,6 +168,7 @@ public class TicTacToe {
                     System.out.print(" | ");
                 }
             }
+
             System.out.println();
             if (row < 2) {
                 System.out.println("--+---+--");
@@ -160,24 +176,29 @@ public class TicTacToe {
         }
     }
 
+    // Method to check if a player has won the game
     public static boolean haveWon(char[][] board, char player) {
 
+        // Check rows
         for (int row = 0; row < 3; row++) {
             if (board[row][0] == player && board[row][1] == player && board[row][2] == player) {
                 return true;
             }
         }
 
+        // Check columns
         for (int col = 0; col < 3; col++) {
             if (board[0][col] == player && board[1][col] == player && board[2][col] == player) {
                 return true;
             }
         }
 
+        // Check diagonals
         if (board[0][0] == player && board[1][1] == player && board[2][2] == player) {
             return true;
         }
 
+        // Check the other diagonal
         if (board[0][2] == player && board[1][1] == player && board[2][0] == player) {
             return true;
         }
@@ -185,8 +206,11 @@ public class TicTacToe {
         return false;
     }
 
+    // Method for the bot to determine its move
+    // It checks for winning moves, blocking moves, and random available moves
     public static int getBotMove(char[][] board, char bot, char player) {
 
+        // Check for winning move
         for (int pos = 1; pos <= 9; pos++) {
 
             int row = getRowFromPosition(pos);
@@ -204,19 +228,22 @@ public class TicTacToe {
             }
         }
 
+        // Check for blocking move
+        // If the player is about to win, block them
         for (int pos = 1; pos <= 9; pos++) {
             int row = getRowFromPosition(pos);
             int col = getColumnFromPosition(pos);
             if (board[row][col] == ' ') {
                 board[row][col] = player;
                 if (haveWon(board, player)) {
-                    board[row][col] = ' '; 
+                    board[row][col] = ' ';
                     return pos;
                 }
                 board[row][col] = ' ';
             }
         }
 
+        // If no winning or blocking move, choose a random available move
         List<Integer> availableMoves = new ArrayList<>();
         for (int pos = 1; pos <= 9; pos++) {
             int row = getRowFromPosition(pos);
@@ -234,6 +261,7 @@ public class TicTacToe {
         return -1;
     }
 
+    // Method to check if the board is full (no empty spaces)
     public static boolean isBoardFull(char[][] board) {
 
         for (int row = 0; row < 3; row++) {
